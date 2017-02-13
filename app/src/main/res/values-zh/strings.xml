@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">有鱼</string>
+    <string name="app_name">有度</string>
     <string name="home_image_view_text">首页</string>
     <string name="pond_image_view_text">鱼塘</string>
     <string name="message_image_view_text">信息</string>

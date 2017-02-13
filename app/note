@@ -1,10 +1,17 @@
 1.fragment的切换有多少种方式，有区别么？
 按照使用的强度来排序
-hide(),show()
+replace()替换,add()添加，remove()移除：会新建Fragment
+hide()隐藏,show()显示——————>用到最多的
+detach()（分离）会回收View
+,attach()
 
 2.只要我们创建Activity一定要在manifest中声明么？
 不需要，比如我们的BaseActivity
 3.activity有几种启动模式
+
+singleTask:一般来讲MainActivity或者HomeActivity都是这个启动模式
 4.实际开发中，对各种文件的命名有没有什么规范？
 Activity的命名：功能+Activity。其他的类似
 xml的命名：activity_main_layout.xml。用在什么地方_作用_layout.xml
+在Fragment中的命名规范：mCommonContext。这里采用的是“功能+所表述的类”的命名
+mCommonView可以用来表示Layout
