@@ -3,7 +3,7 @@
 replace()替换,add()添加，remove()移除：会新建Fragment
 hide()隐藏,show()显示——————>用到最多的
 detach()（分离）会回收View
-,attach()
+attach()
 
 2.只要我们创建Activity一定要在manifest中声明么？
 不需要，比如我们的BaseActivity
@@ -15,3 +15,6 @@ Activity的命名：功能+Activity。其他的类似
 xml的命名：activity_main_layout.xml。用在什么地方_作用_layout.xml
 在Fragment中的命名规范：mCommonContext。这里采用的是“功能+所表述的类”的命名
 mCommonView可以用来表示Layout
+5.我们在onDestory的方法中最好把网络请求页一起让他挂掉
+
+封装思路
