@@ -22,7 +22,7 @@ public class CommonRequst {
      *
      * @param url
      * @param params
-     * @return 返回一个已经创建好的Request
+     * @return 返回一个已经创建好Post类型的Request
      */
     public static Request createPostRequest(String url,RequestParams params)
     {

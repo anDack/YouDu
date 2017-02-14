@@ -4,6 +4,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
+import com.youdu.okhttp.CommonOkHttpClient;
+import com.youdu.okhttp.listener.DisposeDataHandle;
+import com.youdu.okhttp.listener.DisposeDataListener;
+import com.youdu.okhttp.request.CommonRequst;
+import com.youdu.okhttp.response.CommonJsonCallback;
+
 import java.io.IOException;
 
 import okhttp3.Call;
@@ -46,5 +52,20 @@ public class test extends AppCompatActivity{
 
             }
         });
+    }
+    private void test()
+    {
+        CommonOkHttpClient.sendRequset(CommonRequst.createGetRequest("http://www.imooc.com", null)
+                , new CommonJsonCallback(new DisposeDataHandle(new DisposeDataListener() {
+                    @Override
+                    public void onSuccess(Object responseObj) {
+
+                    }
+
+                    @Override
+                    public void onFailure(Object reasonObj) {
+
+                    }
+                },null)));
     }
 }
