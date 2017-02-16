@@ -3,4 +3,5 @@
     <string name="home_image_view_text">首页</string>
     <string name="pond_image_view_text">鱼塘</string>
     <string name="message_image_view_text">信息</string>
+    <string name="home_edit_text">请输入宝贝关键字</string>
 </resources>
