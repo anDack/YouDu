@@ -11,8 +11,10 @@ import com.andack.youdu.module.BaseModel;
  */
 
 public class BaseRecommandModel extends BaseModel {
+    //一定要保证我们的变量名字与我们json中的key完全一样，方便我们去解析数据
     public String ecode;
     public String emsg;
+    public RecommandModel data;
 //    public
 
 }

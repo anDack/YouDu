@@ -9,10 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.andack.youdu.Fragment.BaseFragmnent;
 import com.andack.youdu.R;
+import com.andack.youdu.module.recommend.BaseRecommandModel;
 import com.andack.youdu.networks.RequestCenter;
 import com.youdu.okhttp.listener.DisposeDataListener;
 
@@ -32,6 +34,8 @@ public class HomeFragment extends BaseFragmnent implements View.OnClickListener 
     private TextView QrcodeView;
     private TextView CategoryView;
     private ImageView loadingImageView;
+    private ListView mListView;
+    private BaseRecommandModel mRecommandData;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +49,11 @@ public class HomeFragment extends BaseFragmnent implements View.OnClickListener 
             public void onSuccess(Object responseObj) {
                 //完成我们真正的业务逻辑
                 Log.i(TAG, "onSuccess: "+responseObj.toString());
+                /**
+                 * 更新UI
+                 */
+                mRecommandData= (BaseRecommandModel) responseObj;
+                showSuccessView();
             }
 
             @Override
@@ -53,6 +62,19 @@ public class HomeFragment extends BaseFragmnent implements View.OnClickListener 
 
             }
         });
+    }
+
+    private void showSuccessView() {
+        if (mRecommandData.data.list==null && mRecommandData.data.list.size()==0) {
+            showErrorView();
+        }else {
+            loadingImageView.setVisibility(View.GONE);
+            mListView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void showErrorView() {
+
     }
 
     @Nullable
@@ -69,9 +91,12 @@ public class HomeFragment extends BaseFragmnent implements View.OnClickListener 
         QrcodeView.setOnClickListener(this);
         CategoryView= (TextView) mHomeView.findViewById(R.id.category_view);
         CategoryView.setOnClickListener(this);
+
         loadingImageView= (ImageView) mHomeView.findViewById(R.id.loading_view);
+
         AnimationDrawable anim=(AnimationDrawable) loadingImageView.getDrawable();
         anim.start();
+        mListView= (ListView) mHomeView.findViewById(R.id.content_listview);
 
 
     }

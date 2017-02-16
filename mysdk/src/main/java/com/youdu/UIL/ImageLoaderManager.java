@@ -31,7 +31,7 @@ public class ImageLoaderManager {
     private static final int READ_TIME_OUT=30*1000;//读取超时时间
     private static ImageLoader mImageLoader=null;
     private static ImageLoaderManager mIntances=null;
-    public static ImageLoaderManager getmIntances(Context context)
+    public static ImageLoaderManager getIntances(Context context)
     {
         if (mIntances==null) {
             //这里是保障多个线程调度

@@ -13,6 +13,9 @@ import java.util.ArrayList;
  */
 
 public class RecommandModel extends BaseModel {
+    /**
+     * json中的两个数据部分
+     */
     public ArrayList<RecommandBodyValue>list;
     public RecommandHeadValue head;
 }
