@@ -19,7 +19,7 @@ import java.util.ArrayList;
  * 项目作者：anDack
  * 项目时间：2017/2/18
  * 邮箱：    1160083806@qq.com
- * 描述：    TODO
+ * 描述：    类型三的ViewPager的适配器
  */
 
 public class HotSalePagerAdapter extends PagerAdapter {
@@ -30,7 +30,7 @@ public class HotSalePagerAdapter extends PagerAdapter {
     public HotSalePagerAdapter(Context context,ArrayList<RecommandBodyValue>recommandBodyValues){
         this.mContext=context;
         this.values=recommandBodyValues;
-        imageLoaderManager.getIntances(mContext);
+        imageLoaderManager.getIntances(mContext);//单例设计模式
         inflater=LayoutInflater.from(mContext);
     }
     @Override
@@ -66,7 +66,7 @@ public class HotSalePagerAdapter extends PagerAdapter {
         for (int i = 0; i < imageViews.length; i++) {
             imageLoaderManager.displayImage(imageViews[i],value.url.get(i));
         }
-        container.addView(rootView,0);;
+        container.addView(rootView,0);
         return rootView;
 
     }

@@ -68,7 +68,7 @@ public class ImageLoaderManager {
 
     /**
      * 实现默认的图片显示设置
-     * 别人大牛的经验，套用即可逼逼不得
+     * 别人大牛的经验，套用即可，逼逼不得
      * @return
      */
     private DisplayImageOptions getDefultOptions() {
