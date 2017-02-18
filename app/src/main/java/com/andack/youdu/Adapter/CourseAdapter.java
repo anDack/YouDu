@@ -11,12 +11,16 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.andack.youdu.R;
+import com.andack.youdu.Utils.Util;
+import com.andack.youdu.Utils.Utils;
 import com.andack.youdu.module.recommend.RecommandBodyValue;
 import com.youdu.UIL.ImageLoaderManager;
 
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
 
 /**
  * 项目名称：YouDu
@@ -36,6 +40,7 @@ public class CourseAdapter extends BaseAdapter{
     private LayoutInflater minflater;
     private ImageLoaderManager imageLoaderManager;
     private ArrayList<RecommandBodyValue> bodyValues;
+    private RecommandBodyValue bodyValue;
     public CourseAdapter(Context mContext,ArrayList<RecommandBodyValue> bodyValues)
     {
         this.mContext=mContext;
@@ -84,18 +89,106 @@ public class CourseAdapter extends BaseAdapter{
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder=null;
+        final RecommandBodyValue value= (RecommandBodyValue) getItem(position);
         int type=getItemViewType(position);
+        if (convertView==null) {
+            switch (type) {
+                case CARD_TYPE_ONE:
+                    viewHolder=new ViewHolder();
+                    convertView=minflater.inflate(R.layout.item_product_card_one_layout,parent,false);
+                    viewHolder.mLogoView = (CircleImageView) convertView.findViewById(R.id.item_logo_view);
+                    viewHolder.mTitleView = (TextView) convertView.findViewById(R.id.item_title_view);
+                    viewHolder.mInfoView = (TextView) convertView.findViewById(R.id.item_info_view);
+                    viewHolder.mFooterView = (TextView) convertView.findViewById(R.id.item_footer_view);
+                    viewHolder.mFromView = (TextView) convertView.findViewById(R.id.item_from_view);
+                    viewHolder.mPriceView = (TextView) convertView.findViewById(R.id.item_price_view);
+                    viewHolder.mZanView = (TextView) convertView.findViewById(R.id.item_zan_view);
+                    viewHolder.mProductLayout= (LinearLayout) convertView.findViewById(R.id.product_photo_layout);
+
+                    break;
+                case CARD_TYPE_TWO:
+                    viewHolder = new ViewHolder();
+                    convertView = minflater.inflate(R.layout.item_product_card_two_layout,parent, false);
+                    viewHolder.mLogoView = (CircleImageView) convertView.findViewById(R.id.item_logo_view);
+                    viewHolder.mTitleView = (TextView) convertView.findViewById(R.id.item_title_view);
+                    viewHolder.mFromView = (TextView) convertView.findViewById(R.id.item_from_view);
+                    viewHolder.mInfoView = (TextView) convertView.findViewById(R.id.item_info_view);
+                    viewHolder.mFooterView = (TextView) convertView.findViewById(R.id.item_footer_view);
+                    viewHolder.mPriceView = (TextView) convertView.findViewById(R.id.item_price_view);
+                    viewHolder.mProductView= (ImageView) convertView.findViewById(R.id.product_photo_view);
+                    viewHolder.mZanView = (TextView) convertView.findViewById(R.id.item_zan_view);
+                    break;
+                case CARD_TYPE_THREE:
+                    viewHolder=new ViewHolder();
+                    convertView=minflater.inflate(R.layout.item_product_card_three_layout,parent,false);
+                    viewHolder.mViewPager= (ViewPager) convertView.findViewById(R.id.pager);
+                    ArrayList<RecommandBodyValue> recommandBoyList= Util.handleData(value);
+                    viewHolder.mViewPager.setPageMargin(Utils.dip2px(mContext,12));
+                    viewHolder.mViewPager.setAdapter(new HotSalePagerAdapter(mContext,recommandBoyList));
+                    //左右都可以无限轮播,所以我们设置当前的图片为中间部分的图片
+                    viewHolder.mViewPager.setCurrentItem(recommandBoyList.size()*100);
+                    break;
+            }
+            convertView.setTag(viewHolder);
+        }else {
+            viewHolder= (ViewHolder) convertView.getTag();
+
+        }
+        /**
+         * 因为有不同的数据类型，所以我们填充数据的时候也应当不同
+         */
         switch (type) {
             case CARD_TYPE_ONE:
-                if (convertView==null) {
-                    viewHolder=new ViewHolder();
-//                    convertView=minflater.inflate()
+                imageLoaderManager.displayImage(viewHolder.mLogoView,value.logo);
+                viewHolder.mTitleView.setText(value.title);
+                viewHolder.mFromView.setText(value.from.concat("天前"));//concat是类似与加号的东西
+                viewHolder.mInfoView.setText(value.info);
+                viewHolder.mZanView.setText("点赞".concat(value.zan));
+                viewHolder.mPriceView.setText(value.price);
+                viewHolder.mFooterView.setText(value.text);
+
+                //否则会重叠
+                viewHolder.mProductLayout.removeAllViews();
+                //动态添加到我们的水平ScrollView
+
+                for (String url : value.url) {
+                    viewHolder.mProductLayout.addView(createImageView(url));
                 }
+//                viewHolder.mProductLayout.setOnClickListener(new );
+                break;
+            case CARD_TYPE_TWO:
+                imageLoaderManager.displayImage(viewHolder.mLogoView,value.logo);
+                viewHolder.mTitleView.setText(value.title);
+                viewHolder.mFromView.setText(value.from.concat("天前"));//concat是类似与加号的东西
+                viewHolder.mInfoView.setText(value.info);
+                viewHolder.mZanView.setText("点赞".concat(value.zan));
+                viewHolder.mPriceView.setText(value.price);
+                viewHolder.mFooterView.setText(value.text);
+                imageLoaderManager.displayImage(viewHolder.mProductView,value.url.get(0));
+                break;
+            case CARD_TYPE_THREE:
                 break;
         }
 
         return null;
     }
+
+    /**
+     * 动态创建我们的ImageView
+     * @param url
+     * @return
+     */
+    private View createImageView(String url) {
+        ImageView photoView=new ImageView(mContext);
+        //这里我们设置每个图片显示的参数,与ViewGroup应当相同
+        LinearLayout.LayoutParams layoutParams=new LinearLayout.LayoutParams(
+                Utils.dip2px(mContext,100),LinearLayout.LayoutParams.MATCH_PARENT);
+        layoutParams.leftMargin=Utils.dip2px(mContext,5);
+        photoView.setLayoutParams(layoutParams);
+        imageLoaderManager.displayImage(photoView,url);
+        return photoView;
+    }
+
     class ViewHolder{
         //添加共有属性
         private CircleImageView mLogoView;
