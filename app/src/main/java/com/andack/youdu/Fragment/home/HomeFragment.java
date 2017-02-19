@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.andack.youdu.Adapter.CourseAdapter;
 import com.andack.youdu.Fragment.BaseFragmnent;
 import com.andack.youdu.R;
 import com.andack.youdu.module.recommend.BaseRecommandModel;
@@ -34,6 +35,8 @@ public class HomeFragment extends BaseFragmnent implements View.OnClickListener 
     private TextView QrcodeView;
     private TextView CategoryView;
     private ImageView loadingImageView;
+    private CourseAdapter adapter;
+    private ImageView testImageView;
     private ListView mListView;
     private BaseRecommandModel mRecommandData;
     @Override
@@ -70,6 +73,8 @@ public class HomeFragment extends BaseFragmnent implements View.OnClickListener 
         }else {
             loadingImageView.setVisibility(View.GONE);
             mListView.setVisibility(View.VISIBLE);
+            adapter=new CourseAdapter(getActivity(),mRecommandData.data.list);
+            mListView.setAdapter(adapter);
         }
     }
 

@@ -30,7 +30,7 @@ public class HotSalePagerAdapter extends PagerAdapter {
     public HotSalePagerAdapter(Context context,ArrayList<RecommandBodyValue>recommandBodyValues){
         this.mContext=context;
         this.values=recommandBodyValues;
-        imageLoaderManager.getIntances(mContext);//单例设计模式
+        imageLoaderManager=ImageLoaderManager.getIntances(mContext);//单例设计模式
         inflater=LayoutInflater.from(mContext);
     }
     @Override

@@ -38,6 +38,7 @@ public class CourseAdapter extends BaseAdapter{
     private static final int CARD_TYPE_THREE=0x03;
     private Context mContext;
     private LayoutInflater minflater;
+    private ViewHolder mViewHolder;
     private ImageLoaderManager imageLoaderManager;
     private ArrayList<RecommandBodyValue> bodyValues;
     private RecommandBodyValue bodyValue;
@@ -49,7 +50,7 @@ public class CourseAdapter extends BaseAdapter{
         /**
          * 图片加载引擎初始化
          */
-        imageLoaderManager.getIntances(mContext);
+        imageLoaderManager=ImageLoaderManager.getIntances(mContext);
     }
     @Override
     public int getCount() {
@@ -88,89 +89,91 @@ public class CourseAdapter extends BaseAdapter{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder viewHolder=null;
+
         final RecommandBodyValue value= (RecommandBodyValue) getItem(position);
         int type=getItemViewType(position);
+//        ViewHolder viewHolder=null;
         if (convertView==null) {
             switch (type) {
+                case VIDOE_TYPE:
+                    mViewHolder=new ViewHolder();
+                    break;
                 case CARD_TYPE_ONE:
-                    viewHolder=new ViewHolder();
+                    mViewHolder=new ViewHolder();
                     convertView=minflater.inflate(R.layout.item_product_card_one_layout,parent,false);
-                    viewHolder.mLogoView = (CircleImageView) convertView.findViewById(R.id.item_logo_view);
-                    viewHolder.mTitleView = (TextView) convertView.findViewById(R.id.item_title_view);
-                    viewHolder.mInfoView = (TextView) convertView.findViewById(R.id.item_info_view);
-                    viewHolder.mFooterView = (TextView) convertView.findViewById(R.id.item_footer_view);
-                    viewHolder.mFromView = (TextView) convertView.findViewById(R.id.item_from_view);
-                    viewHolder.mPriceView = (TextView) convertView.findViewById(R.id.item_price_view);
-                    viewHolder.mZanView = (TextView) convertView.findViewById(R.id.item_zan_view);
-                    viewHolder.mProductLayout= (LinearLayout) convertView.findViewById(R.id.product_photo_layout);
-
+                    mViewHolder.mLogoView = (CircleImageView) convertView.findViewById(R.id.item_logo_view);
+                    mViewHolder.mTitleView = (TextView) convertView.findViewById(R.id.item_title_view);
+                    mViewHolder.mInfoView = (TextView) convertView.findViewById(R.id.item_info_view);
+                    mViewHolder.mFooterView = (TextView) convertView.findViewById(R.id.item_footer_view);
+                    mViewHolder.mFromView = (TextView) convertView.findViewById(R.id.item_from_view);
+                    mViewHolder.mPriceView = (TextView) convertView.findViewById(R.id.item_price_view);
+                    mViewHolder.mZanView = (TextView) convertView.findViewById(R.id.item_zan_view);
+                    mViewHolder.mProductLayout= (LinearLayout) convertView.findViewById(R.id.product_photo_layout);
                     break;
                 case CARD_TYPE_TWO:
-                    viewHolder = new ViewHolder();
+                    mViewHolder = new ViewHolder();
                     convertView = minflater.inflate(R.layout.item_product_card_two_layout,parent, false);
-                    viewHolder.mLogoView = (CircleImageView) convertView.findViewById(R.id.item_logo_view);
-                    viewHolder.mTitleView = (TextView) convertView.findViewById(R.id.item_title_view);
-                    viewHolder.mFromView = (TextView) convertView.findViewById(R.id.item_from_view);
-                    viewHolder.mInfoView = (TextView) convertView.findViewById(R.id.item_info_view);
-                    viewHolder.mFooterView = (TextView) convertView.findViewById(R.id.item_footer_view);
-                    viewHolder.mPriceView = (TextView) convertView.findViewById(R.id.item_price_view);
-                    viewHolder.mProductView= (ImageView) convertView.findViewById(R.id.product_photo_view);
-                    viewHolder.mZanView = (TextView) convertView.findViewById(R.id.item_zan_view);
+                    mViewHolder.mLogoView= (CircleImageView) convertView.findViewById(R.id.item2_logo_view);
+                    mViewHolder.mTitleView = (TextView) convertView.findViewById(R.id.item2_title_view);
+                    mViewHolder.mFromView = (TextView) convertView.findViewById(R.id.item2_from_view);
+                    mViewHolder.mInfoView = (TextView) convertView.findViewById(R.id.item2_info_view);
+                    mViewHolder.mFooterView = (TextView) convertView.findViewById(R.id.item2_footer_view);
+                    mViewHolder.mPriceView = (TextView) convertView.findViewById(R.id.item2_price_view);
+                    mViewHolder.mProductView= (ImageView) convertView.findViewById(R.id.product2_photo_view);
+                    mViewHolder.mZanView = (TextView) convertView.findViewById(R.id.item2_zan_view);
                     break;
                 case CARD_TYPE_THREE:
-                    viewHolder=new ViewHolder();
+                    mViewHolder=new ViewHolder();
                     convertView=minflater.inflate(R.layout.item_product_card_three_layout,parent,false);
-                    viewHolder.mViewPager= (ViewPager) convertView.findViewById(R.id.pager);
+                    mViewHolder.mViewPager= (ViewPager) convertView.findViewById(R.id.pager);
                     ArrayList<RecommandBodyValue> recommandBoyList= Util.handleData(value);
-                    viewHolder.mViewPager.setPageMargin(Utils.dip2px(mContext,12));
-                    viewHolder.mViewPager.setAdapter(new HotSalePagerAdapter(mContext,recommandBoyList));
+                    mViewHolder.mViewPager.setPageMargin(Utils.dip2px(mContext,12));
+                    mViewHolder.mViewPager.setAdapter(new HotSalePagerAdapter(mContext,recommandBoyList));
                     //左右都可以无限轮播,所以我们设置当前的图片为中间部分的图片
-                    viewHolder.mViewPager.setCurrentItem(recommandBoyList.size()*100);
+                    mViewHolder.mViewPager.setCurrentItem(recommandBoyList.size()*100);
                     break;
             }
-            convertView.setTag(viewHolder);
-        }else {
-            viewHolder= (ViewHolder) convertView.getTag();
-
+                convertView.setTag(mViewHolder);
+        }
+        else {
+            mViewHolder= (ViewHolder) convertView.getTag();
         }
         /**
          * 因为有不同的数据类型，所以我们填充数据的时候也应当不同
          */
         switch (type) {
             case CARD_TYPE_ONE:
-                imageLoaderManager.displayImage(viewHolder.mLogoView,value.logo);
-                viewHolder.mTitleView.setText(value.title);
-                viewHolder.mFromView.setText(value.from.concat("天前"));//concat是类似与加号的东西
-                viewHolder.mInfoView.setText(value.info);
-                viewHolder.mZanView.setText("点赞".concat(value.zan));
-                viewHolder.mPriceView.setText(value.price);
-                viewHolder.mFooterView.setText(value.text);
+                imageLoaderManager.displayImage(mViewHolder.mLogoView,value.logo);
+                mViewHolder.mTitleView.setText(value.title);
+                mViewHolder.mFromView.setText(value.from.concat("天前"));//concat是类似与加号的东西
+                mViewHolder.mInfoView.setText(value.info);
+                mViewHolder.mZanView.setText("点赞".concat(value.zan));
+                mViewHolder.mPriceView.setText(value.price);
+                mViewHolder.mFooterView.setText(value.text);
 
                 //否则会重叠
-                viewHolder.mProductLayout.removeAllViews();
+                mViewHolder.mProductLayout.removeAllViews();
                 //动态添加到我们的水平ScrollView
 
                 for (String url : value.url) {
-                    viewHolder.mProductLayout.addView(createImageView(url));
+                    mViewHolder.mProductLayout.addView(createImageView(url));
                 }
 //                viewHolder.mProductLayout.setOnClickListener(new );
                 break;
             case CARD_TYPE_TWO:
-                imageLoaderManager.displayImage(viewHolder.mLogoView,value.logo);
-                viewHolder.mTitleView.setText(value.title);
-                viewHolder.mFromView.setText(value.from.concat("天前"));//concat是类似与加号的东西
-                viewHolder.mInfoView.setText(value.info);
-                viewHolder.mZanView.setText("点赞".concat(value.zan));
-                viewHolder.mPriceView.setText(value.price);
-                viewHolder.mFooterView.setText(value.text);
-                imageLoaderManager.displayImage(viewHolder.mProductView,value.url.get(0));
+                imageLoaderManager.displayImage(mViewHolder.mLogoView,value.logo);
+                mViewHolder.mTitleView.setText(value.title);
+                mViewHolder.mFromView.setText(value.from.concat("天前"));//concat是类似与加号的东西
+                mViewHolder.mInfoView.setText(value.info);
+                mViewHolder.mZanView.setText("点赞".concat(value.zan));
+                mViewHolder.mPriceView.setText(value.price);
+                mViewHolder.mFooterView.setText(value.text);
+                imageLoaderManager.displayImage(mViewHolder.mProductView,value.url.get(0));
                 break;
             case CARD_TYPE_THREE:
                 break;
         }
-
-        return null;
+        return convertView;
     }
 
     /**
@@ -189,13 +192,13 @@ public class CourseAdapter extends BaseAdapter{
         return photoView;
     }
 
-    class ViewHolder{
+    private static class ViewHolder{
         //添加共有属性
         private CircleImageView mLogoView;
         private TextView mTitleView;
         private TextView mInfoView;
         private TextView mFooterView;
-        //video Card 属性
+//        //video Card 属性
         private RelativeLayout mVideoContentLayout;
         private ImageView mShareView;
         //video card外所有View的属性

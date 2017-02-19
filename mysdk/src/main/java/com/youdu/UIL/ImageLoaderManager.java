@@ -101,7 +101,9 @@ public class ImageLoaderManager {
     }
     public void displayImage(ImageView imageView,String url,ImageLoadingListener listener)
     {
-        displayImage(imageView,url,null,listener);
+        if (mImageLoader != null) {
+            mImageLoader.displayImage(url,imageView,listener);
+        }
     }
     public void displayImage(ImageView imageView,String url)
     {
