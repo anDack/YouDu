@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.andack.youdu.Adapter.PhotoPageAdapter;
 import com.andack.youdu.R;
 import com.andack.youdu.View.viewpagerindictor.CirclePageIndicator;
 import com.andack.youdu.module.recommend.RecommandHeadValue;
@@ -34,6 +35,7 @@ public class HomeHeaderLayout extends RelativeLayout {
     private ImageView[] imageViews;
     private TextView hotView;
     private LinearLayout footerView;
+    private PhotoPageAdapter adapter;
 
     public HomeHeaderLayout(Context context, RecommandHeadValue recommandHeadValue)
     {
@@ -60,6 +62,7 @@ public class HomeHeaderLayout extends RelativeLayout {
         imageViews[3]= (ImageView) RootView.findViewById(R.id.head_image_four);
         hotView= (TextView) RootView.findViewById(R.id.zuixing_view);
         footerView= (LinearLayout) RootView.findViewById(R.id.content_layout);
+        adapter=new PhotoPageAdapter(mContext,recommandHeadValue.ads,true);
 
 
 
