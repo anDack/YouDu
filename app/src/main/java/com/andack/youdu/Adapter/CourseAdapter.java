@@ -68,7 +68,7 @@ public class CourseAdapter extends BaseAdapter{
     }
 
     /**
-     * 得到一共有几种类型的视频
+     * 得到一共有几种类型的Item
      * @return
      */
     @Override
