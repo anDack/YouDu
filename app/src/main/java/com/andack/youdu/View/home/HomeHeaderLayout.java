@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.andack.youdu.Adapter.PhotoPageAdapter;
 import com.andack.youdu.R;
 import com.andack.youdu.View.viewpagerindictor.CirclePageIndicator;
+import com.andack.youdu.module.recommend.RecommandFooterValue;
 import com.andack.youdu.module.recommend.RecommandHeadValue;
 import com.youdu.UIL.ImageLoaderManager;
 
@@ -63,8 +64,20 @@ public class HomeHeaderLayout extends RelativeLayout {
         hotView= (TextView) RootView.findViewById(R.id.zuixing_view);
         footerView= (LinearLayout) RootView.findViewById(R.id.content_layout);
         adapter=new PhotoPageAdapter(mContext,recommandHeadValue.ads,true);
+        pager.setAdapter(adapter);
+        pager.startAutoScroll(3000);
+        pageIndicator.setViewPager(pager);
+        for (int i = 0; i < imageViews.length; i++) {
+            imageLoaderManager.displayImage(imageViews[i],recommandHeadValue.middle.get(i));
+        }
+        for (RecommandFooterValue value : recommandHeadValue.footer) {
+            footerView.addView(createItem(value));
+        }
 
-
-
+    }
+    private HomeBottomItem createItem(RecommandFooterValue value)
+    {
+        HomeBottomItem item=new HomeBottomItem(mContext,value);
+        return item;
     }
 }

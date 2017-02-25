@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.andack.youdu.Adapter.CourseAdapter;
 import com.andack.youdu.Fragment.BaseFragmnent;
 import com.andack.youdu.R;
+import com.andack.youdu.View.home.HomeHeaderLayout;
 import com.andack.youdu.module.recommend.BaseRecommandModel;
 import com.andack.youdu.networks.RequestCenter;
 import com.youdu.okhttp.listener.DisposeDataListener;
@@ -73,6 +74,13 @@ public class HomeFragment extends BaseFragmnent implements View.OnClickListener 
         }else {
             loadingImageView.setVisibility(View.GONE);
             mListView.setVisibility(View.VISIBLE);
+            //为ListView添加表头部
+            /**
+             * 小贴士：
+             * 一般Add可以添加多个
+             * set只可以有一个
+             */
+            mListView.addHeaderView(new HomeHeaderLayout(mContext,mRecommandData.data.head));
             adapter=new CourseAdapter(getActivity(),mRecommandData.data.list);
             mListView.setAdapter(adapter);
         }
