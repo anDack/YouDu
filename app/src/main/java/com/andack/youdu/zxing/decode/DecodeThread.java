@@ -21,11 +21,11 @@ import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 
+import com.andack.youdu.zxing.app.CaptureActivity;
+import com.andack.youdu.zxing.app.PreferencesActivity;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.ResultPointCallback;
-import com.youdu.zxing.app.CaptureActivity;
-import com.youdu.zxing.app.PreferencesActivity;
 
 import java.util.Hashtable;
 import java.util.Vector;

@@ -29,8 +29,8 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
-import com.youdu.zxing.app.PreferencesActivity;
-import com.youdu.zxing.decode.PlanarYUVLuminanceSource;
+import com.andack.youdu.zxing.app.PreferencesActivity;
+import com.andack.youdu.zxing.decode.PlanarYUVLuminanceSource;
 
 import java.io.IOException;
 import java.util.List;

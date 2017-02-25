@@ -21,7 +21,7 @@ import android.hardware.Camera;
 import android.os.Build;
 import android.util.Log;
 
-import com.youdu.zxing.util.Util;
+import com.andack.youdu.zxing.util.Util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

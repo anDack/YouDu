@@ -2,6 +2,7 @@ package com.andack.youdu.View.home;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -52,6 +53,7 @@ public class HomeBottomItem extends RelativeLayout{
     }
 
     private void initView() {
+        Log.i("Home", "initView: HomeBottomItem run");
         inflater=LayoutInflater.from(context);
         mRootView= (RelativeLayout) inflater.inflate(R.layout.item_home_recommand_layout,null);
         mTitleView= (TextView) mRootView.findViewById(R.id.title_view);
@@ -63,7 +65,7 @@ public class HomeBottomItem extends RelativeLayout{
         mInfoView.setText(mData.info);
         mInterestingView.setText(mData.from);
         imageLoaderManager.displayImage(mImageOneView,mData.imageOne);
-        imageLoaderManager.displayImage(mImageTwoView,mData.imageTwo);
 
+        imageLoaderManager.displayImage(mImageTwoView,mData.imageTwo);
     }
 }

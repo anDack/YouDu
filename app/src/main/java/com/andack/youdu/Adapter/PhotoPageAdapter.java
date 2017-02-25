@@ -3,6 +3,7 @@ package com.andack.youdu.Adapter;
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -23,6 +24,7 @@ public class PhotoPageAdapter extends PagerAdapter {
     private Context mContext;
     private ArrayList<String> strings;
     private boolean misMatch;
+    private static final String TAG="Home";
     private ImageLoaderManager imageLoaderManager;
     public PhotoPageAdapter(Context mContext,ArrayList<String> strings,boolean isMatch)
     {
@@ -53,6 +55,7 @@ public class PhotoPageAdapter extends PagerAdapter {
             imageView=new ImageView(mContext);
         }
         imageLoaderManager.displayImage(imageView,strings.get(position));
+        Log.i(TAG, "instantiateItem: run"+strings.get(position));
         container.addView(imageView, ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewPager.LayoutParams.MATCH_PARENT);
         return imageView;

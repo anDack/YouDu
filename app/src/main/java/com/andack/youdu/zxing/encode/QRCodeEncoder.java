@@ -26,6 +26,9 @@ import android.provider.Contacts;
 import android.telephony.PhoneNumberUtils;
 import android.util.Log;
 
+import com.andack.youdu.R;
+import com.andack.youdu.zxing.decode.Contents;
+import com.andack.youdu.zxing.decode.Intents;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
@@ -35,9 +38,6 @@ import com.google.zxing.client.result.AddressBookParsedResult;
 import com.google.zxing.client.result.ParsedResult;
 import com.google.zxing.client.result.ResultParser;
 import com.google.zxing.common.BitMatrix;
-import com.youdu.R;
-import com.youdu.zxing.decode.Contents;
-import com.youdu.zxing.decode.Intents;
 
 import java.io.IOException;
 import java.io.InputStream;

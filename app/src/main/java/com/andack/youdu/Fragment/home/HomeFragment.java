@@ -94,6 +94,7 @@ public class HomeFragment extends BaseFragmnent implements View.OnClickListener 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mHomeContext=getActivity();
+        mContext=getActivity();
         mHomeView=inflater.inflate(R.layout.fragment_home_layout,container,false);
         initView(mHomeView);
         return mHomeView;

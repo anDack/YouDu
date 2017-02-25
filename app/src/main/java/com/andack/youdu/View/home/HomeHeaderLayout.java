@@ -33,13 +33,14 @@ public class HomeHeaderLayout extends RelativeLayout {
     private RelativeLayout RootView;
     private AutoScrollViewPager pager;
     private CirclePageIndicator pageIndicator;
-    private ImageView[] imageViews;
+    private ImageView[] imageViews=new ImageView[4];
     private TextView hotView;
     private LinearLayout footerView;
     private PhotoPageAdapter adapter;
 
     public HomeHeaderLayout(Context context, RecommandHeadValue recommandHeadValue)
     {
+
         this(context, null,recommandHeadValue);
 
     }
@@ -52,11 +53,11 @@ public class HomeHeaderLayout extends RelativeLayout {
     }
 
     private void initView() {
+
         inflater=LayoutInflater.from(mContext);
         RootView= (RelativeLayout) inflater.inflate(R.layout.listview_home_head_layout,null);
         pager= (AutoScrollViewPager) RootView.findViewById(R.id.pager);
         pageIndicator= (CirclePageIndicator) RootView.findViewById(R.id.pager_indictor_view);
-        imageViews=new ImageView[4];
         imageViews[0]= (ImageView) RootView.findViewById(R.id.head_image_one);
         imageViews[1]= (ImageView) RootView.findViewById(R.id.head_image_two);
         imageViews[2]= (ImageView) RootView.findViewById(R.id.head_image_three);
@@ -73,6 +74,7 @@ public class HomeHeaderLayout extends RelativeLayout {
         for (RecommandFooterValue value : recommandHeadValue.footer) {
             footerView.addView(createItem(value));
         }
+        hotView.setText("今日最新");
 
     }
     private HomeBottomItem createItem(RecommandFooterValue value)

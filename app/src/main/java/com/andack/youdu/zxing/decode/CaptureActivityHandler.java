@@ -25,12 +25,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.andack.youdu.R;
+import com.andack.youdu.zxing.app.CaptureActivity;
+import com.andack.youdu.zxing.camera.CameraManager;
+import com.andack.youdu.zxing.view.ViewfinderResultPointCallback;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
-import com.youdu.R;
-import com.youdu.zxing.app.CaptureActivity;
-import com.youdu.zxing.camera.CameraManager;
-import com.youdu.zxing.view.ViewfinderResultPointCallback;
 
 import java.util.Vector;
 

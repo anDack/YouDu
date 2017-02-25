@@ -26,13 +26,13 @@ import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.youdu.R;
+import com.andack.youdu.R;
 
 import java.io.IOException;
 
 
 /**
- * Manages beeps and vibrations for {@link CaptureActivity}.
+ * Manages beeps and vibrations for
  */
 public final class BeepManager {
 

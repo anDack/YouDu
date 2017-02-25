@@ -28,9 +28,9 @@ import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.andack.youdu.R;
+import com.andack.youdu.zxing.camera.CameraManager;
 import com.google.zxing.ResultPoint;
-import com.youdu.R;
-import com.youdu.zxing.camera.CameraManager;
 
 import java.util.Collection;
 import java.util.HashSet;

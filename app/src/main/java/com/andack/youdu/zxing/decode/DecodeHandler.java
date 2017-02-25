@@ -22,17 +22,18 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
+import com.andack.youdu.R;
+import com.andack.youdu.zxing.app.CaptureActivity;
+import com.andack.youdu.zxing.camera.CameraManager;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.MultiFormatReader;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
-import com.youdu.R;
-import com.youdu.zxing.app.CaptureActivity;
-import com.youdu.zxing.camera.CameraManager;
 
 import java.util.Hashtable;
+
 
 final class DecodeHandler extends Handler
 {

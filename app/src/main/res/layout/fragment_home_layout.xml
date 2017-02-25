@@ -51,8 +51,9 @@
         android:layout_height="match_parent" />
     <ListView
         android:id="@+id/content_listview"
-        android:layout_weight="1"
         android:visibility="gone"
+        android:alwaysDrawnWithCache="false"
+        android:divider="@color/color_cccccc"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
