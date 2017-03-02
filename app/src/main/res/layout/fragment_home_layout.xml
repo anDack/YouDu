@@ -34,8 +34,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:layout_toLeftOf="@+id/category_view"
-            android:layout_toRightOf="@+id/qrcode_view"
+            android:layout_toLeftOf="@id/category_view"
+            android:layout_toRightOf="@id/qrcode_view"
             android:background="@drawable/home_edit_background"
             android:gravity="center"
             android:padding="6dp"
@@ -54,6 +54,7 @@
         android:visibility="gone"
         android:alwaysDrawnWithCache="false"
         android:divider="@color/color_cccccc"
+        android:dividerHeight="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

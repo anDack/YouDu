@@ -35,6 +35,8 @@ import com.google.zxing.ResultPoint;
 import java.util.Collection;
 import java.util.HashSet;
 
+
+
 /**
  * This view is overlaid on top of the camera preview. It adds the viewfinder
  * rectangle and partial transparency outside it, as well as the laser scanner
@@ -43,6 +45,9 @@ import java.util.HashSet;
  * @author dswitkin@google.com (Daniel Switkin)
  */
 public final class ViewfinderView extends View {
+    /**
+     * 限权问题很重要
+     */
 
     private static final int[] SCANNER_ALPHA = {0, 64, 128, 192, 255, 192,
             128, 64};
@@ -122,7 +127,9 @@ public final class ViewfinderView extends View {
             paint.setAlpha(OPAQUE);
             canvas.drawBitmap(resultBitmap, null, frame, paint);
         } else {
-
+            /**
+             * 这里绘制蓝色的框
+             */
             paint.setColor(Color.BLUE);
             canvas.drawRect(frame.left, frame.top, frame.left + ScreenRate,
                     frame.top + CORNER_WIDTH, paint);
@@ -140,7 +147,9 @@ public final class ViewfinderView extends View {
                     - CORNER_WIDTH, frame.right, frame.bottom, paint);
             canvas.drawRect(frame.right - CORNER_WIDTH, frame.bottom
                     - ScreenRate, frame.right, frame.bottom, paint);
-
+            /**
+             * 绘制会上下浮动的扫描框
+             */
             slideTop += SPEEN_DISTANCE;
             if (slideTop >= frame.bottom) {
                 slideTop = frame.top;
@@ -153,7 +162,9 @@ public final class ViewfinderView extends View {
             canvas.drawBitmap(((BitmapDrawable) (getResources()
                             .getDrawable(R.drawable.fle))).getBitmap(), null, lineRect,
                     paint);
-
+            /**
+             * 绘制文字
+             */
             paint.setColor(Color.WHITE);
             paint.setTextSize(TEXT_SIZE * density);
             paint.setAlpha(0x40);

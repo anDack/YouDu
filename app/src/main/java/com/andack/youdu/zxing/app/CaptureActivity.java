@@ -16,7 +16,7 @@
 
 package com.andack.youdu.zxing.app;
 
-import android.app.Activity;
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -42,6 +42,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.andack.youdu.Activity.CheckPermissionsActivity;
 import com.andack.youdu.R;
 import com.andack.youdu.zxing.camera.CameraManager;
 import com.andack.youdu.zxing.decode.BeepManager;
@@ -80,7 +81,7 @@ import java.util.Vector;
  * @author dswitkin@google.com (Daniel Switkin)
  * @author Sean Owen
  */
-public final class CaptureActivity extends Activity implements SurfaceHolder.Callback {
+public final class CaptureActivity extends CheckPermissionsActivity implements SurfaceHolder.Callback {
 
     private static final String TAG = CaptureActivity.class.getSimpleName();
 
@@ -136,6 +137,9 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
     @Override
     public void onCreate(Bundle icicle) {
+        needPermissions=new String[]{
+                Manifest.permission.CAMERA
+        };
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(icicle);
@@ -146,7 +150,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
         Util.currentActivity = this;
         CameraManager.init(getApplication());
-        viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
+        viewfinderView = (ViewfinderView) findViewById(R.id.view_viewfinder);
 
         mButtonBack = (Button) findViewById(R.id.button_back);
         mButtonBack.setOnClickListener(click);

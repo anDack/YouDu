@@ -13,10 +13,10 @@
             android:layout_height="fill_parent"
             android:layout_gravity="center" />
 
-        <com.youdu.zxing.view.ViewfinderView
-            android:id="@+id/viewfinder_view"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
+       <com.andack.youdu.zxing.view.ViewfinderView
+           android:id="@+id/view_viewfinder"
+           android:layout_width="fill_parent"
+           android:layout_height="fill_parent" />
 
         <include
             android:id="@+id/include1"

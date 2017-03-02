@@ -1,6 +1,7 @@
 package com.andack.youdu.Fragment.home;
 
-import android.content.Context;
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.andack.youdu.Adapter.CourseAdapter;
 import com.andack.youdu.Fragment.BaseFragmnent;
@@ -18,6 +20,7 @@ import com.andack.youdu.R;
 import com.andack.youdu.View.home.HomeHeaderLayout;
 import com.andack.youdu.module.recommend.BaseRecommandModel;
 import com.andack.youdu.networks.RequestCenter;
+import com.andack.youdu.zxing.app.CaptureActivity;
 import com.youdu.okhttp.listener.DisposeDataListener;
 
 import static android.content.ContentValues.TAG;
@@ -31,15 +34,21 @@ import static android.content.ContentValues.TAG;
  */
 
 public class HomeFragment extends BaseFragmnent implements View.OnClickListener {
-    private Context mHomeContext;
-    private View mHomeView;
+    private final static int REQUEST_QCODE=0x01;
+    /**
+     * UI
+     */
+    private View mContentView;
     private TextView QrcodeView;
     private TextView CategoryView;
     private ImageView loadingImageView;
-    private CourseAdapter adapter;
-    private ImageView testImageView;
     private ListView mListView;
+    /**
+     * Data
+     */
+    private CourseAdapter adapter;
     private BaseRecommandModel mRecommandData;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,7 +90,7 @@ public class HomeFragment extends BaseFragmnent implements View.OnClickListener 
              * set只可以有一个
              */
             mListView.addHeaderView(new HomeHeaderLayout(mContext,mRecommandData.data.head));
-            adapter=new CourseAdapter(getActivity(),mRecommandData.data.list);
+            adapter=new CourseAdapter(mContext,mRecommandData.data.list);
             mListView.setAdapter(adapter);
         }
     }
@@ -93,32 +102,47 @@ public class HomeFragment extends BaseFragmnent implements View.OnClickListener 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mHomeContext=getActivity();
         mContext=getActivity();
-        mHomeView=inflater.inflate(R.layout.fragment_home_layout,container,false);
-        initView(mHomeView);
-        return mHomeView;
+        mContentView=inflater.inflate(R.layout.fragment_home_layout,container,false);
+        initView();
+        return mContentView;
     }
 
-    private void initView(View mHomeView) {
-        QrcodeView= (TextView) mHomeView.findViewById(R.id.qrcode_view);
+    private void initView() {
+        QrcodeView= (TextView) mContentView.findViewById(R.id.qrcode_view);
         QrcodeView.setOnClickListener(this);
-        CategoryView= (TextView) mHomeView.findViewById(R.id.category_view);
+        CategoryView= (TextView) mContentView.findViewById(R.id.category_view);
         CategoryView.setOnClickListener(this);
-
-        loadingImageView= (ImageView) mHomeView.findViewById(R.id.loading_view);
-
+        loadingImageView= (ImageView) mContentView.findViewById(R.id.loading_view);
         AnimationDrawable anim=(AnimationDrawable) loadingImageView.getDrawable();
         anim.start();
-        mListView= (ListView) mHomeView.findViewById(R.id.content_listview);
-
-
+        mListView= (ListView) mContentView.findViewById(R.id.content_listview);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.qrcode_view:
+                Intent intent=new Intent(mContext, CaptureActivity.class);
+                startActivityForResult(intent,REQUEST_QCODE);
+                break;
+        }
+    }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_QCODE:
+                if (resultCode== Activity.RESULT_OK) {
+                    String code=data.getStringExtra("SCAN_RESULT");
+                    if (code.contains("http")||code.contains("https"))
+                    {
+                        
+                    }else {
+                        Toast.makeText(mContext, "no thing", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
         }
     }
 }

@@ -53,9 +53,10 @@ public class HomeHeaderLayout extends RelativeLayout {
     }
 
     private void initView() {
-
         inflater=LayoutInflater.from(mContext);
-        RootView= (RelativeLayout) inflater.inflate(R.layout.listview_home_head_layout,null);
+        //TODO: this
+        //解释因为这个玩意是没有父类布局，所以直接传一个this。只有当添加Item的时候才需要传入Null
+        RootView= (RelativeLayout) inflater.inflate(R.layout.listview_home_head_layout,this);
         pager= (AutoScrollViewPager) RootView.findViewById(R.id.pager);
         pageIndicator= (CirclePageIndicator) RootView.findViewById(R.id.pager_indictor_view);
         imageViews[0]= (ImageView) RootView.findViewById(R.id.head_image_one);
