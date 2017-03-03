@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mraid_content_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+    <!--duplicateParentState:对Layout是否监听-->
+    <TextureView
+        android:id="@+id/xadsdk_player_video_textureView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:duplicateParentState="true" />
+    <!--当前帧时间画面图片-->
+    <ImageView
+        android:id="@+id/framing_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/xadsdk_frame_bg"
+        android:scaleType="fitCenter"
+        android:src="@drawable/xadsdk_img_error"
+        android:visibility="gone" />
+    <!--播放按钮-->
+    <Button
+        android:id="@+id/xadsdk_small_play_btn"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/xadsdk_ad_play"
+        android:visibility="gone" />
+    <!--加载动画-->
+    <ImageView
+        android:id="@+id/loading_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@drawable/xadsdk_ad_loading" />
+    <!--全屏按钮-->
+    <ImageView
+        android:id="@+id/xadsdk_to_full_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="13dp"
+        android:layout_marginTop="12dp"
+        android:padding="10dp"
+        android:scaleType="center"
+        android:src="@drawable/xadsdk_ad_mini" />
+
+</RelativeLayout>
