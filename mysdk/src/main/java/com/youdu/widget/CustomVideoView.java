@@ -317,7 +317,7 @@ public class CustomVideoView extends RelativeLayout implements
 
 
     /**
-     * 播放完成后的状态
+     * 播放完成后的状态,
      */
     public void playBack() {
 
