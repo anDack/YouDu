@@ -8,6 +8,9 @@ import android.graphics.SurfaceTexture;
 import android.graphics.drawable.AnimationDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -22,6 +25,10 @@ import android.widget.RelativeLayout;
 
 import com.andack.mysdk.R;
 import com.youdu.Content.SDKConstant;
+import com.youdu.util.Utils;
+
+import java.io.IOException;
+
 
 /**
  * 项目名称：YouDu
@@ -87,7 +94,23 @@ public class CustomVideoView extends RelativeLayout implements
     private ScreenEventReceiver mScreenEventReceiver;          //用来监听屏幕点击广播
     private ADFrameImageLoadListener mFrameImageListener;       //暂停图的回调接口
     private AudioManager audioManager;                         //音量控制器
+    /**
+     * 在播放时候往，主线程发送播放信息数据
+     */
+    private Handler mHandler=new Handler(Looper.getMainLooper()){
+        @Override
+        public void handleMessage(Message msg){
+            switch (msg.what){
+                case TIME_MSG:
+                    if (isPlaying()) {
+                        listener.onBufferUpdate(getCurrentPosition());
+                        sendEmptyMessageDelayed(TIME_MSG,TIME_INVAL);
+                    }
+                    break;
+            }
 
+        }
+    };
 
     public CustomVideoView(Context context, ViewGroup parentContainer) {
         super(context);
@@ -155,6 +178,7 @@ public class CustomVideoView extends RelativeLayout implements
 
     /**
      * MediaPlayer相关方法的实现
+     *
      */
     /**
      * 播放器准备完成
@@ -162,7 +186,17 @@ public class CustomVideoView extends RelativeLayout implements
      */
     @Override
     public void onPrepared(MediaPlayer mp) {
-
+        showPlayView();
+        mMediaPlayer=mp;
+        if (mMediaPlayer!=null) {
+            mMediaPlayer.setOnBufferingUpdateListener(this);
+            mCurrentCount=0;
+            if (listener!=null) {
+                listener.onAdVideoLoadSuccess();
+            }
+            //满足自动播放条件，就会自动播放
+           decideCanPlay();
+        }
     }
 
     @Override
@@ -231,6 +265,19 @@ public class CustomVideoView extends RelativeLayout implements
      * 加载我们的视频
      */
     public void load(){
+        if (playerState!=STATE_IDLE) {
+            return;
+        }
+        showLoadingView();
+        try {
+            setCurrentPlayState(STATE_IDLE);
+            checkMediaPlayer();
+            mMediaPlayer.setDataSource(this.mUrl);
+            mMediaPlayer.prepareAsync();
+        } catch (IOException e) {
+//            e.printStackTrace();
+            stop();
+        }
 
     }
 
@@ -245,8 +292,29 @@ public class CustomVideoView extends RelativeLayout implements
      * 恢复视频播放
      */
     public void resume(){
-
+        if (playerState!=STATE_PAUSING) {
+            return;
+        }
+        if (!isPlaying()){
+            entryResumeState();
+        }
     }
+
+    private void entryResumeState() {
+        setCurrentPlayState(STATE_PLAYING);
+        setIsRealPaused(false);
+        setIsComplete(false);
+    }
+
+    private void setIsRealPaused(boolean b) {
+        this.mIsRealPause=b;
+    }
+
+    private void setIsComplete(boolean b) {
+        this.mIsComplete=b;
+    }
+
+
 
     /**
      * 播放完成后的状态
@@ -259,6 +327,23 @@ public class CustomVideoView extends RelativeLayout implements
      * 处于停止状态
      */
     public void stop(){
+        //第一步先去移除所有的MediaPlayer对象
+        if (this.mMediaPlayer!=null) {
+            mMediaPlayer.reset();
+            mMediaPlayer.setOnSeekCompleteListener(null);//用来重置播放状态
+            mMediaPlayer.stop();
+            mMediaPlayer.release();//释放MediaPlayer资源
+            mMediaPlayer=null;
+        }
+        mHandler.removeCallbacksAndMessages(null);
+        setCurrentPlayState(STATE_IDLE);
+        if (mCurrentCount<LOAD_TOTAL_COUNT){
+            mCurrentCount+=1;
+            load();
+        }else {
+            showPauseView(false);
+        }
+
 
     }
 
@@ -349,7 +434,7 @@ public class CustomVideoView extends RelativeLayout implements
     }
     private void showPauseView(boolean show){
         mFullBtn.setVisibility(show?View.VISIBLE:View.GONE);
-        mMiniPlayBtn.setVisibility(show?View.VISIBLE:View.GONE);
+        mMiniPlayBtn.setVisibility(show?View.GONE:View.VISIBLE);
         mLoadBar.clearAnimation();
         mLoadBar.setVisibility(View.GONE);
         //mFrameView应该是缩略图吧。。。。。。。。。。。。。。。。。。。
@@ -399,6 +484,25 @@ public class CustomVideoView extends RelativeLayout implements
                     }
                 }
             });
+        }
+    }
+    public boolean isPlaying(){
+        if (mMediaPlayer!=null && mMediaPlayer.isPlaying()) {
+            return true;
+        }
+        return false;
+    }
+    public int getCurrentPosition(){
+        if (mMediaPlayer!=null) {
+            return mMediaPlayer.getCurrentPosition();
+        }
+        return 0;
+    }
+    private void decideCanPlay(){
+        if (Utils.canAutoPlay(getContext(), SDKConstant.AutoPlaySetting.AUTO_PLAY_3G_4G_WIFI)) {
+            resume();
+        }else {
+            pause();
         }
     }
 }

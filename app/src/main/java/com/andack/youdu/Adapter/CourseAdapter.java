@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.andack.youdu.R;
 import com.andack.youdu.Utils.Util;
-import com.andack.youdu.Utils.Utils;
+import com.youdu.util.Utils;
 import com.andack.youdu.module.recommend.RecommandBodyValue;
 import com.youdu.UIL.ImageLoaderManager;
 
