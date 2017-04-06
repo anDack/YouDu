@@ -24,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.andack.mysdk.R;
+import com.youdu.Content.AdParameters;
 import com.youdu.Content.SDKConstant;
 import com.youdu.util.Utils;
 
@@ -87,7 +88,7 @@ public class CustomVideoView extends RelativeLayout implements
     private String mFrameURI;
     private boolean isMute;                  // 是否静音
     private int ScreenWidth,mDestationHeight;//屏幕宽高数据
-
+    private ViewGroup mParentContainer;
 
     private MediaPlayer mMediaPlayer;
     private ADVideoPlayerListener listener;                     //事件回调接口
@@ -169,6 +170,15 @@ public class CustomVideoView extends RelativeLayout implements
     @Override
     protected void onVisibilityChanged(View changedView, int visibility) {
         super.onVisibilityChanged(changedView, visibility);
+        if (visibility==VISIBLE && playerState == STATE_PAUSING) {
+            if (isRealPaused()|| isComplete()){
+                pause();
+            }else {
+                decideCanPlay();
+            }
+        }else {
+            pause();
+        }
     }
 
     @Override
@@ -181,21 +191,28 @@ public class CustomVideoView extends RelativeLayout implements
      *
      */
     /**
-     * 播放器准备完成
+     * 播放器准备完成,异步加载视频成功以后,在整个视频播放的生命周期中充当load成功的下一步
      * @param mp
      */
     @Override
     public void onPrepared(MediaPlayer mp) {
-        showPlayView();
+        showPlayView();                                         //改变相关的视图，使其适应播放状态下，应该有的样子
         mMediaPlayer=mp;
         if (mMediaPlayer!=null) {
-            mMediaPlayer.setOnBufferingUpdateListener(this);
-            mCurrentCount=0;
+            mMediaPlayer.setOnBufferingUpdateListener(this);    //监听当前的缓冲状态
+            mCurrentCount=0;                                     //将加载次数进行归位
             if (listener!=null) {
-                listener.onAdVideoLoadSuccess();
+                listener.onAdVideoLoadSuccess();                 //向上回调告诉调用者视频加载完毕
             }
             //满足自动播放条件，就会自动播放
-           decideCanPlay();
+//           decideCanPlay();
+            if (Utils.canAutoPlay(getContext(), AdParameters.getCurrentSetting()) && Utils.getVisablePercent(parentContainer)>SDKConstant.VIDEO_HEIGHT_PERCENT){
+                setCurrentPlayState(STATE_PAUSING);
+                resume();
+            }else {
+                setCurrentPlayState(STATE_PLAYING);
+                pause();
+            }
         }
     }
 
@@ -209,11 +226,24 @@ public class CustomVideoView extends RelativeLayout implements
      * @param mp
      * @param what
      * @param extra
-     * @return
+     * @return If the value of return is TRUE.It mean`s the User deal with the ERROR
      */
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
-        return false;
+        this.playerState=STATE_ERROR;
+        mMediaPlayer = mp;
+        if (mMediaPlayer!=null) {
+            mMediaPlayer.reset();
+        }
+        if (mCurrentCount >= LOAD_TOTAL_COUNT){
+            showPauseView(false);
+            if (this.listener!=null) {
+                listener.onAdVideoLoadFail();
+            }
+        }
+        this.stop();        //清空MediaPalyer
+
+        return true;
     }
 
     /**
@@ -222,7 +252,16 @@ public class CustomVideoView extends RelativeLayout implements
      */
     @Override
     public void onCompletion(MediaPlayer mp) {
-
+        if (listener!=null) {
+            listener.onAdVideoLoadComplete();           //告诉调用者视频播放完成
+        }
+        playBack();                                     //将视频的变成第一帧
+        setIsComplete(true);                            //设置播放完成属性
+        //设置当前为真正的暂停
+        // 暂停情况有两种，
+        // 1.滑出屏幕暂停（当用户滑回界面要重新播放）
+        // 2,播放完成暂停
+        setIsRealPaused(true);
     }
 
     @Override
@@ -241,7 +280,10 @@ public class CustomVideoView extends RelativeLayout implements
      */
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-
+        videoSurface=new Surface(surface);
+        checkMediaPlayer();
+        mMediaPlayer.setSurface(videoSurface);
+        load();
     }
 
     @Override
@@ -265,18 +307,21 @@ public class CustomVideoView extends RelativeLayout implements
      * 加载我们的视频
      */
     public void load(){
+        //如果当前状态不为空闲状态，那么不需要加载
         if (playerState!=STATE_IDLE) {
             return;
         }
+        //如果是空闲状态，那么我们去显示加载动画
         showLoadingView();
         try {
-            setCurrentPlayState(STATE_IDLE);
-            checkMediaPlayer();
-            mMediaPlayer.setDataSource(this.mUrl);
-            mMediaPlayer.prepareAsync();
+            //设置一些状态
+            setCurrentPlayState(STATE_IDLE);            //设置当前状态为IDLE
+            checkMediaPlayer();                          //检查MediaPlayer是否存在
+            mMediaPlayer.setDataSource(this.mUrl);       //设置当前数据源
+            mMediaPlayer.prepareAsync();                 // 设置异步加载
         } catch (IOException e) {
 //            e.printStackTrace();
-            stop();
+            stop();                                     //并且调用stop方法,进行重新加载等操作
         }
 
     }
@@ -292,11 +337,18 @@ public class CustomVideoView extends RelativeLayout implements
      * 恢复视频播放
      */
     public void resume(){
-        if (playerState!=STATE_PAUSING) {
+        if (playerState!=STATE_PAUSING) {                //如果状态不为PAUSEING则返回
             return;
         }
         if (!isPlaying()){
-            entryResumeState();
+            //如果不为播放状态，处于暂停状态
+            entryResumeState();                           //设置当前的变量为播放需要的变量
+            mMediaPlayer.setOnSeekCompleteListener(null); //不进行设置进度条监听，貌似DOME没有提供拖动进度条的功能
+            mMediaPlayer.start();                          //视频开启播放
+            mHandler.sendEmptyMessage(TIME_MSG);
+            showPauseView(true);
+        }else {
+            showPauseView(false);
         }
     }
 
@@ -313,14 +365,18 @@ public class CustomVideoView extends RelativeLayout implements
     private void setIsComplete(boolean b) {
         this.mIsComplete=b;
     }
-
-
-
     /**
      * 播放完成后的状态,
      */
     public void playBack() {
+        setCurrentPlayState(STATE_PAUSING);
+        mHandler.removeCallbacksAndMessages(null);
+        if (mMediaPlayer!=null) {
+            mMediaPlayer.setOnSeekCompleteListener(null);       //重置状态
+            mMediaPlayer.seekTo(0);
+            mMediaPlayer.pause();
 
+        }
     }
 
     /**
@@ -329,15 +385,15 @@ public class CustomVideoView extends RelativeLayout implements
     public void stop(){
         //第一步先去移除所有的MediaPlayer对象
         if (this.mMediaPlayer!=null) {
-            mMediaPlayer.reset();
+            mMediaPlayer.reset();                        //只是为了代码健壮性考虑
             mMediaPlayer.setOnSeekCompleteListener(null);//用来重置播放状态
-            mMediaPlayer.stop();
-            mMediaPlayer.release();//释放MediaPlayer资源
-            mMediaPlayer=null;
+            mMediaPlayer.stop();                         //将MediaPlayer进行暂停
+            mMediaPlayer.release();                      //释放MediaPlayer资源
+            mMediaPlayer=null;                           //
         }
-        mHandler.removeCallbacksAndMessages(null);
-        setCurrentPlayState(STATE_IDLE);
-        if (mCurrentCount<LOAD_TOTAL_COUNT){
+        mHandler.removeCallbacksAndMessages(null);        //重置
+        setCurrentPlayState(STATE_IDLE);                 //重新设置状态为空闲
+        if (mCurrentCount<LOAD_TOTAL_COUNT){            //判断当前加载次数，少于额定的加载次数就进行重新加载
             mCurrentCount+=1;
             load();
         }else {
@@ -351,7 +407,25 @@ public class CustomVideoView extends RelativeLayout implements
      * 销毁
      */
     public void destroy(){
+        if (this.mMediaPlayer!=null) {
+            this.mMediaPlayer.setOnSeekCompleteListener(null);
+            this.mMediaPlayer.stop();
+            this.mMediaPlayer.release();
+            this.mMediaPlayer=null;
+        }
+        setCurrentPlayState(STATE_IDLE);
+        mCurrentCount=0;
+        setIsComplete(false);
+        setIsRealPaused(false);
+        mHandler.removeCallbacksAndMessages(null);
+        unRegisterBroadcastReceiver();
+        showPauseView(false);
+    }
 
+    private void unRegisterBroadcastReceiver() {
+        if (mScreenEventReceiver!=null) {
+            getContext().unregisterReceiver(mScreenEventReceiver);
+        }
     }
 
     public void setListener(ADVideoPlayerListener listener)
@@ -370,6 +444,15 @@ public class CustomVideoView extends RelativeLayout implements
     public void onClick(View v) {
 
     }
+
+    public boolean isRealPaused() {
+        return mIsRealPause;
+    }
+
+    public boolean isComplete() {
+        return mIsComplete;
+    }
+
     /**
      * 自定义接口
      */
@@ -432,9 +515,10 @@ public class CustomVideoView extends RelativeLayout implements
         return mMediaPlayer;
 
     }
+    //显示暂停界面stop(true)
     private void showPauseView(boolean show){
-        mFullBtn.setVisibility(show?View.VISIBLE:View.GONE);
-        mMiniPlayBtn.setVisibility(show?View.GONE:View.VISIBLE);
+        mFullBtn.setVisibility(show?View.VISIBLE : View.GONE);
+        mMiniPlayBtn.setVisibility(show?View.GONE : View.VISIBLE);
         mLoadBar.clearAnimation();
         mLoadBar.setVisibility(View.GONE);
         //mFrameView应该是缩略图吧。。。。。。。。。。。。。。。。。。。
@@ -464,9 +548,9 @@ public class CustomVideoView extends RelativeLayout implements
      */
     private void showPlayView(){
         mLoadBar.clearAnimation();
-        mLoadBar.setVisibility(View.GONE);
-        mMiniPlayBtn.setVisibility(View.GONE);
-        mFrameView.setVisibility(View.GONE);
+        mLoadBar.setVisibility(View.GONE);      //隐藏加载进度条
+        mMiniPlayBtn.setVisibility(View.GONE);  //隐藏播放按钮
+        mFrameView.setVisibility(View.GONE);    //隐藏缩略图
     }
 
     private void loadFrameImage() {
@@ -499,10 +583,10 @@ public class CustomVideoView extends RelativeLayout implements
         return 0;
     }
     private void decideCanPlay(){
-        if (Utils.canAutoPlay(getContext(), SDKConstant.AutoPlaySetting.AUTO_PLAY_3G_4G_WIFI)) {
+
+        if (Utils.getVisablePercent(parentContainer)> SDKConstant.VIDEO_HEIGHT_PERCENT) {
             resume();
-        }else {
+        }else
             pause();
-        }
     }
 }

@@ -1,8 +1,11 @@
 package com.youdu.util;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.DisplayMetrics;
+import android.view.View;
 
 import com.youdu.Content.SDKConstant;
 
@@ -44,6 +47,22 @@ public class Utils {
         }
         return result;
 
+    }
+    public static int getVisablePercent(View pView){
+        if (pView!=null && pView.isShown()) {
+            DisplayMetrics displayMetrics=pView.getContext().getResources().getDisplayMetrics();
+            int displayWidth=displayMetrics.widthPixels;
+            Rect rect=new Rect();
+            pView.getGlobalVisibleRect(rect);
+            if ((rect.top>0) &&(rect.left<displayWidth)) {
+                double areaVisable=rect.width()*rect.height();
+                double areaTotal=pView.getWidth()*pView.getHeight();
+                return (int) ((areaVisable/areaTotal)*100);
+            }else {
+                return -1;
+            }
+        }else
+            return -1;
     }
     //判断WIFI是否连接
     public static boolean isWifiConnected(Context context){
